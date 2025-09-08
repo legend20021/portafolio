@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Galería de Modelos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://ajax.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700;900&display=swap" rel="stylesheet">
+<script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
+<style>
+  :root {
+    --bg-color: #fff;
+    --bg-light-gray: #f7f7ff;
+    --primary-text-color: #1d1d1f;
+    --secondary-text-color: #555;
+    --accent-color: #FAB900;
+    --penagos-blue: #00AEEF;
+    --penagos-purple: #4D2D8F;
+    --border-color: #e5e5e5;
+    --font-family: 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
+    --ease-out-quint: cubic-bezier(.22, 1, .36, 1);
+    --header-height: 70px
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box
+  }
+
+  html {
+    scroll-behavior: smooth
+  }
+
+  body {
+    font-family: var(--font-family);
+    background-color: var(--bg-color);
+    color: var(--primary-text-color);
+    overflow-x: hidden;
+    padding-top: var(--header-height);
+    padding-bottom: 100px
+  }
+
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 20px
+  }
+
+  #splash-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--bg-light-gray);
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    transition: opacity .8s ease-out .8s, visibility 0s 1.6s
+  }
+
+  #splash-screen.hidden {
+    opacity: 0;
+    visibility: hidden
+  }
+
+  .page-content {
+    clip-path: circle(0% at 50% 50%);
+    transition: clip-path 1.2s var(--ease-out-quint) .5s
+  }
+
+  .page-content.visible {
+    clip-path: circle(150% at 50% 50%)
+  }
+
+  .splash-content {
+    text-align: center
+  }
+
+  .splash-logo img {
+    width: 250px;
+    height: auto;
+    margin-bottom: 20px;
+    opacity: 0;
+    animation: item-fade-in 1s ease-out forwards .2s
+  }
+
+  .splash-slogan {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--penagos-purple);
+    opacity: 0;
+    animation: item-fade-in 1s ease-out forwards .6s
+  }
+
+  .splash-loader {
+    position: absolute;
+    bottom: 40px;
+    opacity: 0;
+    animation: item-fade-in 1s ease-out forwards 1.2s;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--secondary-text-color)
+  }
+
+  .splash-loader svg {
+    width: 22px;
+    height: 22px;
+    fill: currentColor
+  }
+
+  .splash-loader p {
+    font-size: .9rem;
+    font-weight: 500
+  }
+
+  .splash-loader a {
+    color: var(--primary-text-color);
+    text-decoration: none;
+    font-weight: 700
+  }
+
+  @keyframes item-fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(20px)
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0)
+    }
+  }
+
+  .main-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: var(--header-height);
+    z-index: 100;
+    background-color: rgba(255, 255, 255, .95);
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    will-change: background-color
+  }
+
+  .logo img {
+    height: 40px;
+    width: auto;
+    display: block
+  }
+
+  .cta-button, .secondary-button {
+    text-decoration: none;
+    padding: 10px 24px;
+    border-radius: 100px;
+    font-weight: 700;
+    font-size: .9rem;
+    transition: transform .3s ease, box-shadow .3s ease, background-color .3s ease, color .3s ease, border-color .3s ease;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    border: none;
+    cursor: pointer;
+    will-change: transform
+  }
+
+  .cta-button:disabled {
+    background-color: #ccc;
+    color: #666;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none
+  }
+
+  .cta-button {
+    background-color: var(--accent-color);
+    color: var(--primary-text-color)
+  }
+
+  .cta-button:hover:not(:disabled) {
+    transform: translateY(-3px) scale(1.03);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, .1)
+  }
+
+  .secondary-button {
+    background-color: var(--bg-color);
+    color: var(--primary-text-color);
+    border: 1px solid var(--border-color)
+  }
+
+  .secondary-button:hover {
+    background-color: var(--primary-text-color);
+    color: var(--bg-color);
+    border-color: var(--primary-text-color)
+  }
+
+  .gallery-section {
+    padding: 60px 0;
+    background-color: var(--bg-light-gray);
+    border-bottom: 1px solid var(--border-color)
+  }
+
+  .gallery-header {
+    text-align: center;
+    margin-bottom: 40px
+  }
+
+  .gallery-header h2 {
+    font-size: 2.5rem;
+    font-weight: 900;
+    letter-spacing: -1.5px
+  }
+
+  .model-selector-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 40px
+  }
+
+  .model-selector-container label {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: var(--secondary-text-color)
+  }
+
+  .select-wrapper {
+    position: relative;
+    width: 100%;
+    max-width: 400px
+  }
+
+  #model-select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    width: 100%;
+    padding: 14px 45px 14px 20px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--primary-text-color);
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    background-color: var(--bg-color);
+    cursor: pointer;
+    transition: border-color .3s ease, box-shadow .3s ease
+  }
+
+  #model-select:hover {
+    border-color: var(--penagos-purple)
+  }
+
+  #model-select:focus {
+    outline: none;
+    border-color: var(--penagos-purple);
+    box-shadow: 0 0 0 3px rgba(77, 45, 143, .2)
+  }
+
+  .select-wrapper::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: 18px;
+    transform: translateY(-50%) rotate(45deg);
+    width: 8px;
+    height: 8px;
+    border-bottom: 2px solid var(--primary-text-color);
+    border-right: 2px solid var(--primary-text-color);
+    pointer-events: none;
+    transition: transform .3s ease
+  }
+
+  .model-viewer-wrapper {
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 15px 30px rgba(0, 0, 0, .08);
+    border: 1px solid var(--border-color);
+    background-color: #fff;
+    width: 100%;
+    aspect-ratio: 16/10;
+    max-height: 70vh;
+    display: flex;
+    justify-content: center;
+    align-items: center
+  }
+
+  model-viewer {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    --progress-bar-color: var(--accent-color)
+  }
+
+  .intro-section {
+    background-color: var(--bg-color);
+    text-align: center;
+    padding: 80px 20px
+  }
+
+  .intro-content {
+    max-width: 750px;
+    margin: 0 auto
+  }
+
+  .intro-content h1 {
+    font-size: 2.8rem;
+    font-weight: 900;
+    line-height: 1.1;
+    letter-spacing: -2px;
+    margin-bottom: 15px
+  }
+
+  .intro-content p {
+    font-size: 1.2rem;
+    line-height: 1.6;
+    color: var(--secondary-text-color);
+    max-width: 650px;
+    margin: 0 auto 30px auto
+  }
+
+  .main-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    z-index: 998;
+    background-color: rgba(247, 247, 255, .95);
+    border-top: 1px solid var(--border-color);
+    padding: 8px 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    font-size: .8rem;
+    color: var(--secondary-text-color);
+    text-align: center
+  }
+
+  .main-footer a {
+    color: var(--secondary-text-color);
+    display: inline-flex;
+    align-items: center;
+    transition: color .3s ease;
+    text-decoration: none
+  }
+
+  .main-footer a:hover {
+    color: var(--primary-text-color)
+  }
+
+  .main-footer svg {
+    width: 18px;
+    height: 18px;
+    fill: currentColor
+  }
+
+  .reveal-on-scroll {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity .8s var(--ease-out-quint), transform .8s var(--ease-out-quint);
+    will-change: transform, opacity
+  }
+
+  .reveal-on-scroll.is-visible {
+    opacity: 1;
+    transform: translateY(0)
+  }
+
+  @media (max-width:768px) {
+    :root {
+      --header-height: 60px
+    }
+
+    body {
+      padding-bottom: 80px
+    }
+
+    .logo img {
+      height: 35px
+    }
+
+    .gallery-header h2 {
+      font-size: 1.8rem
+    }
+
+    .gallery-section {
+      padding: 40px 0
+    }
+
+    .model-viewer-wrapper {
+      aspect-ratio: 4/3
+    }
+
+    .intro-section {
+      padding: 60px 20px
+    }
+
+    .intro-content h1 {
+      font-size: 2rem
+    }
+
+    .intro-content p {
+      font-size: 1rem
+    }
+
+    .main-footer {
+      font-size: .75rem;
+      gap: 8px
+    }
+  }
+
+  #paywall-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, .9);
+    backdrop-filter: blur(5px);
+    z-index: 999;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    flex-direction: column;
+    padding: 20px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity .5s ease
+  }
+
+  #paywall-overlay.visible {
+    display: flex;
+    pointer-events: auto;
+    opacity: 1
+  }
+
+  #paywall-overlay h3 {
+    font-size: 2.5rem;
+    color: var(--penagos-purple);
+    margin-bottom: 15px
+  }
+
+  #paywall-overlay p {
+    font-size: 1.1rem;
+    color: var(--primary-text-color);
+    max-width: 500px;
+    line-height: 1.5
+  }
+</style>
+</head>
+<body>
+<div id="splash-screen">
+  <div class="splash-content">
+    <div class="splash-logo"><img src="https://via.placeholder.com/250x71.png?text=Logo+Generico" alt="Logo Generico" width="250" height="71"></div>
+    <p class="splash-slogan">Ingeniería de Precisión para el Grano Perfecto.</p>
+  </div>
+  <div class="splash-loader">
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <title>GitHub</title>
+      <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297 24 5.67 18.627.297 12 .297z"/>
+    </svg>
+    <p><a href="https://github.com/legend20021" target="_blank" rel="noopener noreferrer">@legend20021</a></p>
+  </div>
+</div>
+<div id="paywall-overlay">
+  <h3>¡Límite de visualizaciones alcanzado!</h3>
+  <p>Para desbloquear vistas ilimitadas de nuestros modelos 3D, por favor suscríbete por $50 USD al mes.</p>
+  <p>Contacta a un asesor para más información.</p>
+</div>
+<div class="page-content">
+  <header class="main-header"><a href="#" class="logo"><img src="https://via.placeholder.com/140x40.png?text=Logo+Generico" alt="Logo Generico" width="140" height="40"></a></header>
+  <main>
+    <section id="gallery" class="gallery-section">
+      <div class="container">
+        <div class="gallery-header reveal-on-scroll">
+          <h2>Nuestros Modelos</h2>
+        </div>
+        <div class="model-selector-container reveal-on-scroll">
+          <label for="model-select">Selecciona un modelo para visualizar:</label>
+          <div class="select-wrapper">
+            <select id="model-select">
+              <option value="https://raw.githubusercontent.com/legend20021/portafolio/main/base_basic_shaded.glb">
+                Modelo Básico
+              </option>
+            </select>
+          </div>
+        </div>
+        <div class="model-viewer-wrapper reveal-on-scroll">
+          <model-viewer id="gallery-viewer" alt="Visor de modelos 3D" ar ar-modes="webxr scene-viewer quick-look"
+                        camera-controls auto-rotate loading="lazy"></model-viewer>
+        </div>
+      </div>
+    </section>
+    <section id="intro" class="intro-section">
+      <div class="container intro-content reveal-on-scroll">
+        <h1>Ingeniería Superior para un Grano Perfecto.</h1>
+        <p>Descubra la máquina que redefine la eficiencia y la calidad en la primera etapa del beneficio. Precisión, durabilidad y un rendimiento excepcional en cada cereza.</p>
+        <a href="https://wa.me/573187284464" target="_blank" class="cta-button">Contactar un Asesor</a>
+      </div>
+    </section>
+  </main>
+  <footer class="main-footer">
+    <p>Desarrollado por Jonathan Jerez</p>
+    <a href="https://github.com/legend20021" target="_blank" rel="noopener noreferrer" aria-label="Perfil de GitHub">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <title>GitHub</title>
+        <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297 24 5.67 18.627.297 12 .297z"/>
+      </svg>
+    </a>
+  </footer>
+</div>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    var a = document.getElementById("splash-screen"),
+      b = document.querySelector(".page-content"),
+      c = document.getElementById("model-select"),
+      d = document.getElementById("gallery-viewer"),
+      e = document.getElementById("paywall-overlay"),
+      f = 0,
+      g = 3;
+
+    function h(j) {
+      if (f >= g) {
+        e.classList.add("visible");
+        return
+      }
+      d.setAttribute("src", j), f++
+    }
+    setTimeout(function () {
+      a.classList.add("hidden"), b.classList.add("visible")
+    }, 2e3), h(c.value), c.addEventListener("change", function (j) {
+      h(j.target.value)
+    });
+    var i = document.querySelectorAll(".reveal-on-scroll");
+
+    function k() {
+      i.forEach(function (l) {
+        var m = l.getBoundingClientRect();
+        m.top < window.innerHeight - 50 && l.classList.add("is-visible")
+      })
+    }
+    window.addEventListener("scroll", k), k()
+  });
+</script>
+</body>
+</html>
